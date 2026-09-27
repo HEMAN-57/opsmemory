@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: opsmemory
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: production
+    rootDir: backend
+    envVars:
+      - fromGroup: opsmemory-production
