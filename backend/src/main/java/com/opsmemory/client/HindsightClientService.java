@@ -140,6 +140,33 @@ public class HindsightClientService {
     // ── List Memories ───────────────────────────────────────────────────
 
     /**
+     * List all memories in the bank.
+     * GET /v1/default/banks/{bank_id}/memories/list
+     */
+    public ListMemoriesResponse listMemories(int limit, int offset) {
+        log.info("Listing memories for bank '{}' (limit={}, offset={})", bankId, limit, offset);
+
+        try {
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/v1/default/banks/{bankId}/memories/list")
+                            .queryParam("limit", limit)
+                            .queryParam("offset", offset)
+                            .build(bankId))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, resp ->
+                            resp.bodyToMono(String.class)
+                                    .flatMap(body -> Mono.error(new RuntimeException(
+                                            "Hindsight list memories failed [" + resp.statusCode() + "]: " + body))))
+                    .bodyToMono(ListMemoriesResponse.class)
+                    .block(REQUEST_TIMEOUT);
+        } catch (Exception e) {
+            log.error("Failed to list memories: {}", e.getMessage(), e);
+            throw new RuntimeException("Hindsight list memories failed", e);
+        }
+    }
+
+    /**
      * List memories in the bank (for duplicate checking).
      * GET /v1/default/banks/{bank_id}/memories/list?document_id=...
      */

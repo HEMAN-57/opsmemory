@@ -17,8 +17,7 @@ hindsight:
 # Groq LLM (for future Phase 2 — Spring Boot side reasoning)
 groq:
   api-key: ${GROQ_API_KEY:}
-  model: ${GROQ_MODEL:llama-3.3-70b-versatile}
-
+  model: ${GROQ_MODEL:openai/gpt-oss-120b}
 # Logging
 logging:
   level:

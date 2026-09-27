@@ -111,4 +111,36 @@ public class IncidentAgentService {
 
         return response;
     }
+
+    public com.opsmemory.api.dto.IncidentResolveResponse resolveIncident(com.opsmemory.api.dto.IncidentResolveRequest request) {
+        log.info("Resolving incident");
+
+        String documentId = "resolve-" + java.util.UUID.randomUUID().toString();
+        
+        StringBuilder content = new StringBuilder();
+        content.append("INCIDENT:\n").append(request.getIncident()).append("\n\n");
+        if (request.getRootCause() != null && !request.getRootCause().isBlank()) {
+            content.append("ROOT CAUSE:\n").append(request.getRootCause()).append("\n\n");
+        }
+        content.append("RESOLUTION:\n").append(request.getResolution()).append("\n\n");
+        content.append("OUTCOME:\n").append(request.getOutcome());
+
+        com.opsmemory.client.dto.MemoryItem item = new com.opsmemory.client.dto.MemoryItem(
+                content.toString(),
+                "Post-incident resolution review",
+                documentId
+        );
+
+        com.opsmemory.client.dto.RetainResponse retainResponse = hindsightClient.retain(item);
+
+        return new com.opsmemory.api.dto.IncidentResolveResponse(
+                retainResponse.isSuccess(),
+                documentId,
+                retainResponse.isSuccess() ? "Incident successfully retained in Hindsight memory." : "Failed to retain incident memory."
+        );
+    }
+
+    public com.opsmemory.client.dto.ListMemoriesResponse getIncidentHistory(int limit, int offset) {
+        return hindsightClient.listMemories(limit, offset);
+    }
 }
