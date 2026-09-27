@@ -3,7 +3,7 @@
 # ============================================
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -12,7 +12,8 @@ spring:
 # Hindsight Memory Service
 hindsight:
   api-url: ${HINDSIGHT_API_URL:http://localhost:8888}
-  bank-id: ${HINDSIGHT_BANK_ID:opsmemory}
+  bank-id: ${HINDSIGHT_BANK_ID:OpsMemory}
+  api-key: ${HINDSIGHT_API_KEY:}
 
 # Groq LLM (for future Phase 2 — Spring Boot side reasoning)
 groq:

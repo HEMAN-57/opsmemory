@@ -19,15 +19,25 @@ public class HindsightConfig {
     @Value("${hindsight.api-url}")
     private String hindsightApiUrl;
 
+    @Value("${hindsight.api-key:}")
+    private String hindsightApiKey;
+
     @Bean
     public WebClient hindsightWebClient(WebClient.Builder builder) {
         log.info("Configuring Hindsight WebClient → {}", hindsightApiUrl);
-        return builder
+        builder = builder
                 .baseUrl(hindsightApiUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .filter(logRequest())
-                .build();
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        
+        if (hindsightApiKey != null && !hindsightApiKey.isBlank()) {
+            builder.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + hindsightApiKey);
+            log.info("Hindsight WebClient configured with API Key authentication");
+        } else {
+            log.warn("Hindsight WebClient configured WITHOUT API Key authentication");
+        }
+        
+        return builder.filter(logRequest()).build();
     }
 
     private ExchangeFilterFunction logRequest() {

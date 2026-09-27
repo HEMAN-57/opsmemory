@@ -14,7 +14,7 @@ import {
   Network
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8080/api/incidents';
+const API_BASE = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/incidents`;
 
 function App() {
   const [history, setHistory] = useState([]);
